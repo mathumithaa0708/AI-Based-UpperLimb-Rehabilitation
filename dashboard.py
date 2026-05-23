@@ -4,14 +4,9 @@ import mediapipe as mp
 import numpy as np
 import time
 import matplotlib.pyplot as plt
-
 st.set_page_config(layout="wide")
-
-# ---------------- SIDEBAR ----------------
 st.sidebar.title("🧠 Physio AI")
 page = st.sidebar.radio("Navigation", ["🏠 Dashboard", "🏋 Exercise", "📊 Report"])
-
-# ---------------- SESSION ----------------
 def init_state():
     keys = {
         "rep": 0,
@@ -30,7 +25,6 @@ def init_state():
 
 init_state()
 
-# ---------------- ANGLE ----------------
 def calc_angle(a, b, c):
     a=np.array(a); b=np.array(b); c=np.array(c)
     rad=np.arctan2(c[1]-b[1],c[0]-b[0]) - np.arctan2(a[1]-b[1],a[0]-b[0])
@@ -38,7 +32,6 @@ def calc_angle(a, b, c):
     if ang>180: ang=360-ang
     return ang
 
-# ---------------- SMOOTHING ----------------
 def smooth_angle(angle):
     buf = st.session_state.angle_buffer
     buf.append(angle)
@@ -46,7 +39,6 @@ def smooth_angle(angle):
         buf.pop(0)
     return np.mean(buf)
 
-# ---------------- DASHBOARD ----------------
 if page == "🏠 Dashboard":
     st.title("🏠 Dashboard")
 
@@ -60,7 +52,6 @@ if page == "🏠 Dashboard":
 
     c3.metric("Accuracy %", round(acc,2))
 
-# ---------------- EXERCISE ----------------
 elif page == "🏋 Exercise":
 
     st.title("🏋 Exercise Session")
@@ -106,13 +97,12 @@ elif page == "🏋 Exercise":
 
                     now = time.time()
 
-                    # ---------- THRESHOLDS ----------
                     STRAIGHT = 160
                     BENT = 60
                     HOLD_TIME = 0.8
                     COOLDOWN = 1.5
 
-                    # ---------- STABLE STATES ----------
+                
                     if angle > STRAIGHT:
                         if st.session_state.stage == "DOWN":
                             # rep completed
@@ -153,7 +143,7 @@ elif page == "🏋 Exercise":
                     else:
                         instruction = "Moving..."
 
-                    # ---------- DISPLAY ----------
+                   
                     cv2.putText(img,f'{exercise}',(10,30),0,1,(255,255,255),2)
                     cv2.putText(img,f'Angle:{int(angle)}',(10,60),0,1,(0,255,0),2)
                     cv2.putText(img,f'Reps:{st.session_state.rep}',(10,90),0,1,(255,0,0),2)
@@ -172,7 +162,6 @@ elif page == "🏋 Exercise":
 
         cap.release()
 
-# ---------------- REPORT ----------------
 elif page == "📊 Report":
 
     st.title("📊 Report")
